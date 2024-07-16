@@ -10,15 +10,24 @@ import {
 } from "@tanstack/react-table";
 import { DateTime } from "luxon";
 import { columns } from "./columns";
+import EditRowModal from "./EditRowModal";
+import AddROW from "./AddROW";
 
 const BasicTable = () => {
-  const data = useMemo(() => mockdata, []);
+  const [updatedData, setUpdatedData] = useState(mockdata);
+  const data = useMemo(() => updatedData, [updatedData]);
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
+  const [editingRow, setEditingRow] = useState(null);
 
+  const handleDelete = (row) => {
+    const newData = data.filter((item) => item.id !== row.original.id);
+    setUpdatedData(newData);
+  };
+  const tableColumns = columns({}, handleDelete);
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -30,12 +39,27 @@ const BasicTable = () => {
     initialState: {
       pagination: {
         pageIndex: 0, //custom initial page index
-        pageSize: 12, //custom default page size
+        pageSize: 10, //custom default page size
       },
     },
   });
+
+  const handleAddRow = (newRow) => {
+    setUpdatedData((prev) => [
+      ...prev,
+      { ...newRow, id: updatedData.length + 1 },
+    ]);
+  };
   return (
     <div className="w3-container">
+      {editingRow && (
+        <EditRowModal
+          row={editingRow}
+          onSave={handleSave}
+          onClose={() => setEditingRow(null)}
+        />
+      )}
+
       <input
         type="text"
         value={filtering || ""}
@@ -108,6 +132,7 @@ const BasicTable = () => {
           Last Page
         </button>
       </div>
+      <AddROW handleAddRow={handleAddRow} />
     </div>
   );
 };

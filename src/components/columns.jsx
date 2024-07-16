@@ -1,7 +1,8 @@
 import React from "react";
 import { DateTime } from "luxon";
+const [editingRowIndex, setEditingRowIndex] = useState(null);
 
-export const columns = [
+export const columns = (handleEdit, handleDelete) => [
   { header: "ID", accessorKey: "id", footer: "ID" },
   // {
   //   header: "Name",
@@ -32,5 +33,14 @@ export const columns = [
         DateTime.DATE_MED
       );
     },
+  },
+  {
+    header: "Actions",
+    cell: (info) => (
+      <div>
+        <button onClick={() => handleEdit(info.row)}>Edit</button>
+        <button onClick={() => handleDelete(info.row)}>Delete</button>
+      </div>
+    ),
   },
 ];
