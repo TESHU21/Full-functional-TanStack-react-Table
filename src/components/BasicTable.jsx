@@ -9,25 +9,25 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { DateTime } from "luxon";
-import { columns } from "./columns";
+import { getColumns } from "./columns";
 import EditRowModal from "./EditRowModal";
 import AddROW from "./AddROW";
 
 const BasicTable = () => {
-  const [updatedData, setUpdatedData] = useState(mockdata);
-  const data = useMemo(() => updatedData, [updatedData]);
+  const [data, setData] = useState(mockdata);
+  // const data = useMemo(() => updatedData, [updatedData]);
   const [sorting, setSorting] = useState([]);
   const [filtering, setFiltering] = useState("");
-  const [editingRow, setEditingRow] = useState(null);
+  const [editingRowIndex, setEditingRowIndex] = useState(null);
+  const columns = useMemo(
+    () => getColumns(editingRowIndex, setEditingRowIndex, data, setData),
+    [editingRowIndex, data]
+  );
 
-  const handleDelete = (row) => {
-    const newData = data.filter((item) => item.id !== row.original.id);
-    setUpdatedData(newData);
-  };
-  const tableColumns = columns({}, handleDelete);
+  // const tableColumns = columns({}, handleDelete);
   const table = useReactTable({
     data,
-    columns: tableColumns,
+    columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -45,27 +45,20 @@ const BasicTable = () => {
   });
 
   const handleAddRow = (newRow) => {
-    setUpdatedData((prev) => [
-      ...prev,
-      { ...newRow, id: updatedData.length + 1 },
-    ]);
+    setData((prev) => [...prev, { ...newRow, id: data.length + 1 }]);
   };
   return (
     <div className="w3-container">
-      {editingRow && (
-        <EditRowModal
-          row={editingRow}
-          onSave={handleSave}
-          onClose={() => setEditingRow(null)}
+      <div>
+        <input
+          type="text"
+          value={filtering || ""}
+          onChange={(e) => setFiltering(e.target.value)}
+          placeholder="Global search..."
         />
-      )}
+        <AddROW handleAddRow={handleAddRow} />
+      </div>
 
-      <input
-        type="text"
-        value={filtering || ""}
-        onChange={(e) => setFiltering(e.target.value)}
-        placeholder="Global search..."
-      />
       <table className="w3-table-all">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -132,7 +125,6 @@ const BasicTable = () => {
           Last Page
         </button>
       </div>
-      <AddROW handleAddRow={handleAddRow} />
     </div>
   );
 };
