@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { DateTime } from "luxon";
+import { MdDelete, MdEdit, MdModeEditOutline } from "react-icons/md";
+import { FaSave } from "react-icons/fa";
+import { createColumnHelper } from "@tanstack/react-table";
 const handleInputChange = (e, rowIndex, field, data, setData) => {
   const newData = [...data];
   newData[rowIndex][field] = e.target.value;
@@ -13,6 +16,7 @@ const handleDelete = (id, data, setData) => {
   const newData = data.filter((item) => item.id !== id);
   setData(newData);
 };
+const columnHelper = createColumnHelper();
 
 export const getColumns = (
   editingRowIndex,
@@ -21,12 +25,13 @@ export const getColumns = (
   setData
 ) => [
   { header: "ID", accessorKey: "id", footer: "ID" },
-  {
-    header: "Name",
+  columnHelper.group({
+    id: "nameGroup",
+    header: () => <span>Name</span>,
     columns: [
-      {
+      columnHelper.accessor("first_name", {
         header: "First Name",
-        accessorKey: "first_name",
+
         footer: "First Name",
         cell: ({ row, getValue }) =>
           editingRowIndex === row.index ? (
@@ -39,10 +44,10 @@ export const getColumns = (
           ) : (
             getValue()
           ),
-      },
-      {
+      }),
+      columnHelper.accessor("last_name", {
         header: "Last Name",
-        accessorKey: "last_name",
+
         footer: "Last Name",
         cell: ({ row, getValue }) =>
           editingRowIndex === row.index ? (
@@ -55,12 +60,14 @@ export const getColumns = (
           ) : (
             getValue()
           ),
-      },
+      }),
     ],
-  },
-  {
+  }),
+
+  columnHelper.accessor("email", {
+    id: "Email",
     header: "Email",
-    accessorKey: "email",
+
     footer: "Email",
     cell: ({ row, getValue }) =>
       editingRowIndex === row.index ? (
@@ -73,7 +80,7 @@ export const getColumns = (
       ) : (
         getValue()
       ),
-  },
+  }),
 
   {
     header: "Date of Birth",
@@ -97,15 +104,19 @@ export const getColumns = (
   {
     header: "Actions",
     cell: ({ row }) => (
-      <div>
+      <div className=" flex gap-3">
         {editingRowIndex === row.index ? (
-          <button onClick={() => saveChanges(setEditingRowIndex)}>Save</button>
+          <button onClick={() => saveChanges(setEditingRowIndex)}>
+            <FaSave size={20} color="blue" />{" "}
+          </button>
         ) : (
-          <button onClick={() => setEditingRowIndex(row.index)}>Edit</button>
+          <button onClick={() => setEditingRowIndex(row.index)}>
+            <MdEdit size={20} color="green" />
+          </button>
         )}
 
         <button onClick={() => handleDelete(row.original.id, data, setData)}>
-          Delete
+          <MdDelete size={20} color="red" />
         </button>
       </div>
     ),
