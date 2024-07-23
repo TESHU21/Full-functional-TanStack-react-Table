@@ -3,6 +3,18 @@ import { DateTime } from "luxon";
 import { MdDelete, MdEdit, MdModeEditOutline } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 import { createColumnHelper } from "@tanstack/react-table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 const handleInputChange = (e, rowIndex, field, data, setData) => {
   const newData = [...data];
   newData[rowIndex][field] = e.target.value;
@@ -40,6 +52,7 @@ export const getColumns = (
               onChange={(e) =>
                 handleInputChange(e, row.index, "first_name", data, setData)
               }
+              className="border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 w-64 p-2 bg-gray-50 placeholder-gray-400 shadow-sm focus:border-blue-300 focus:outline-none transition duration-150 ease-in-out"
             />
           ) : (
             getValue()
@@ -56,6 +69,7 @@ export const getColumns = (
               onChange={(e) =>
                 handleInputChange(e, row.index, "last_name", data, setData)
               }
+              className="border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 w-64 p-2 bg-gray-50 placeholder-gray-400 shadow-sm focus:border-blue-300 focus:outline-none transition duration-150 ease-in-out"
             />
           ) : (
             getValue()
@@ -76,6 +90,7 @@ export const getColumns = (
           onChange={(e) =>
             handleInputChange(e, row.index, "email", data, setData)
           }
+          className="border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 w-64 p-2 bg-gray-50 placeholder-gray-400 shadow-sm focus:border-blue-300 focus:outline-none transition duration-150 ease-in-out"
         />
       ) : (
         getValue()
@@ -96,6 +111,7 @@ export const getColumns = (
           onChange={(e) =>
             handleInputChange(e, row.index, "dob", data, setData)
           }
+          className="border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 w-64 p-2 bg-gray-50 placeholder-gray-400 shadow-sm focus:border-blue-300 focus:outline-none transition duration-150 ease-in-out"
         />
       ) : (
         DateTime.fromISO(row.original.dob).toLocaleString(DateTime.DATE_MED)
@@ -114,10 +130,32 @@ export const getColumns = (
             <MdEdit size={20} color="green" />
           </button>
         )}
-
-        <button onClick={() => handleDelete(row.original.id, data, setData)}>
-          <MdDelete size={20} color="red" />
-        </button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline">
+              {" "}
+              <MdDelete size={20} color="red" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete user
+                data from table!
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => handleDelete(row.original.id, data, setData)}
+                className=" text-red-50 bg-gray-400"
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     ),
   },

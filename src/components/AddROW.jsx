@@ -29,6 +29,7 @@ const AddROW = ({ handleAddRow }) => {
     setNewRow({});
     closeModal();
   };
+  const modalStyle = " h-[20rem] bg-red";
   return (
     <div>
       <div>
@@ -47,9 +48,11 @@ const AddROW = ({ handleAddRow }) => {
           isOpen={isModalOpen}
           onRequestClose={closeModal}
           contentLabel="Add New Peopel"
+          className="absolute top-10 left-10 right-10 bottom-2 border border-gray-300 bg-white  rounded-md  w-auto h-[200px]  p-5 overflow-hidden"
+          overlayClassName="fixed inset-0 bg-white bg-opacity-75 flex justify-center items-center"
         >
           <h2>Add New Row</h2>
-          <form onSubmit={handleSubmit} className=" font-roboto mt-2">
+          <form onSubmit={handleSubmit} className=" font-roboto mt-2 h-60">
             <input
               type="text"
               name="first_name"
@@ -83,11 +86,15 @@ const AddROW = ({ handleAddRow }) => {
               className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-[10rem] mr-5"
             />
 
-            <button type="submit" className=" mx-3">
+            <button type="submit" className=" mx-3 text-green-400">
               Add Row
             </button>
 
-            <button type="button" onClick={closeModal}>
+            <button
+              type="button"
+              onClick={closeModal}
+              className=" text-red-500"
+            >
               Cancel
             </button>
           </form>

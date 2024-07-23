@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BasicTable from "./components/BasicTable";
+
 import "./App.css";
 
 function App() {
